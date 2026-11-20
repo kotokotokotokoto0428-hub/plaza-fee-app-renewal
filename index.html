@@ -1,1 +1,182 @@
 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07539c">
+<title>都城市中心市街地中核施設｜利用料金自動判定</title>
+<style>
+:root{--blue:#07539c;--blue2:#0784dc;--ink:#123f70;--red:#ef6b32;--green:#45a72d;--cyan:#079bd0;--purple:#9b4d9b;--pale:#eef8ff}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#f8fcff,#edf8ff);color:var(--ink);font-family:"Noto Sans JP","Yu Gothic",Meiryo,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:22px 16px 48px}
+header{text-align:center;margin-bottom:20px}
+.kicker{font-size:clamp(17px,2.3vw,25px);font-weight:800;letter-spacing:.05em}
+h1{font-size:clamp(26px,4vw,43px);line-height:1.3;color:var(--blue);margin:5px 0 9px;font-weight:900}
+.pill{display:inline-block;background:linear-gradient(90deg,#07539c,#087fc7);color:#fff;padding:10px 28px;border-radius:40px;font-weight:900;font-size:clamp(19px,2.7vw,28px)}
+.lead{font-size:clamp(14px,2vw,18px);font-weight:700;margin:12px 0}
+.start{max-width:370px;margin:18px auto 20px;padding:12px 20px;border:2px solid var(--blue2);border-radius:40px;text-align:center;background:#dff2ff;font-size:25px;font-weight:900;box-shadow:0 3px 10px #07539c18}
+.start small{display:block;font-size:14px;font-weight:700}
+.panel{background:#f0f9ff;border:2px solid #1495ee;border-radius:15px;padding:17px;margin:16px 0;box-shadow:0 3px 12px #07539c0d}
+.stephead{display:flex;align-items:center;gap:13px;margin:0 0 15px}
+.stepnum{flex:none;background:linear-gradient(90deg,#0874bd,#0a92db);color:white;border-radius:30px;padding:7px 20px;font-size:22px;font-weight:900}
+.stephead h2{font-size:clamp(20px,2.8vw,29px);margin:0;color:var(--blue);font-weight:900}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.grid.five{grid-template-columns:repeat(5,minmax(0,1fr))}
+.choice{border:2px solid #168fe0;border-radius:11px;background:white;min-height:112px;padding:15px 10px;color:var(--ink);font:inherit;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;transition:.15s}
+.choice:hover{transform:translateY(-2px);box-shadow:0 6px 16px #07539c20}
+.choice:focus-visible,.btn:focus-visible{outline:4px solid #8bcfff;outline-offset:2px}
+.choice b{font-size:clamp(16px,1.8vw,20px);line-height:1.4}
+.choice small{font-size:13px;line-height:1.45}
+.icon{font-size:32px;line-height:1}
+.hall{border-color:#1b6689}.gallery{border-color:#54a33c}.studio{border-color:#ed7738}.seminar{border-color:#a347a1}
+.hall .icon,.hall b{color:#1b6689}.gallery .icon,.gallery b{color:#398e32}.studio .icon,.studio b{color:#e66c2d}.seminar .icon,.seminar b{color:#973c94}
+.route-note{background:#f8e5f6;border:1px solid #bd7cba;border-radius:10px;padding:10px;text-align:center;font-weight:800;color:#793278;margin-top:12px}
+.section-label{font-weight:900;font-size:18px;margin:0 0 12px}
+.choices5 .choice{min-height:105px}
+.outcome{border:0;border-radius:12px;color:#111;font-size:22px;font-weight:900;padding:17px 12px;text-align:center;box-shadow:0 4px 7px #0002;margin:16px auto;max-width:440px}
+.outcome.red{background:linear-gradient(#f58b50,#ed5a13)}
+.outcome.green{background:linear-gradient(#68bd4d,#329b20)}
+.outcome.blue{background:linear-gradient(#42bce7,#0098c9)}
+.result{background:white;border:2px solid #168fe0;border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 5px 18px #07539c12}
+.result-kicker{color:#0878bd;font-weight:900;font-size:23px}
+.result h2{font-size:clamp(24px,4vw,38px);margin:8px 0 18px;color:#123f70}
+.rategrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ratecard{border:1px solid #c8e4f6;border-radius:13px;padding:17px;background:#f6fbff}
+.ratecard h3{font-size:22px;margin:0 0 12px;color:var(--blue)}
+.rate{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #d7e9f5;padding:10px 0;font-size:clamp(17px,2.2vw,22px);font-weight:800}
+.rate strong{white-space:nowrap;color:#07539c}
+.hidden{display:none!important}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:20px 0}
+.btn{border:0;border-radius:30px;padding:12px 23px;font-size:16px;font-weight:900;cursor:pointer}
+.primary{background:var(--blue);color:white}.secondary{background:#e1f1fc;color:var(--blue);border:1px solid #83c7f2}
+.note{background:#edf7ff;border:1px solid #9ccff0;border-radius:11px;padding:13px;font-size:14px;line-height:1.7;margin-top:18px}
+footer{text-align:center;color:#567a9d;font-size:12px;margin-top:24px}
+@media(max-width:780px){.grid,.grid.five{grid-template-columns:repeat(2,minmax(0,1fr))}.rategrid{grid-template-columns:1fr}.stephead{align-items:flex-start}.stepnum{font-size:18px;padding:7px 14px}.choice{min-height:100px}}
+@media(max-width:430px){.grid,.grid.five{grid-template-columns:1fr}.wrap{padding:14px 11px 35px}.panel{padding:13px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="kicker">都城市中心市街地中核施設</div>
+ <h1>ムジカホール・茶霧茶霧ギャラリー</h1>
+ <div class="pill">利用料金 自動判定フロー</div>
+ <p class="lead">ご利用の施設・目的・入場料に合わせて、料金区分を確認できます。</p>
+</header>
+<div class="start">スタート<small>ご利用の施設を選択してください。</small></div>
+
+<section class="panel" id="facilityPanel">
+ <div class="stephead"><span class="stepnum">STEP 1</span><h2>どちらの施設を利用しますか？</h2></div>
+ <div class="grid">
+  <button class="choice hall" onclick="chooseFacility('ムジカホール')"><span class="icon">🎭</span><b>ムジカホール</b></button>
+  <button class="choice gallery" onclick="chooseFacility('茶霧茶霧ギャラリー')"><span class="icon">🖼️</span><b>茶霧茶霧ギャラリー</b></button>
+  <button class="choice studio" onclick="showStudioResult()"><span class="icon">🎹</span><b>スタジオ・リハーサル室</b><small>（単独利用）</small></button>
+  <button class="choice seminar" onclick="chooseFacility('セミナールーム')"><span class="icon">👥</span><b>セミナールームA・B</b><small>施設共通フローへ</small></button>
+ </div>
+ <div class="route-note">セミナールームA・Bは、施設共通フローで判定します。</div>
+</section>
+
+<section class="panel hidden" id="purposePanel">
+ <div class="stephead"><span class="stepnum">STEP 2</span><h2>利用目的・内容を確認してください。</h2></div>
+ <p class="section-label">該当する項目を選択してください。</p>
+ <div class="grid five choices5">
+  <button class="choice" onclick="showResult('営利料金','企業利用（文化利用を除く）','red')"><b>企業利用</b><small>※文化利用を除く</small></button>
+  <button class="choice" onclick="showResult('営利料金','主な内容が営業・販売','red')"><b>主な内容が<br>営業・販売</b></button>
+  <button class="choice" onclick="showFeePanel('member')"><b>会員招待のみ</b><small>※一般の観客は含まない</small></button>
+  <button class="choice" onclick="showFeePanel('culture')"><b>文化利用</b><small>※企業団体も含む</small></button>
+  <button class="choice" onclick="showFeePanel('other')"><b>その他</b></button>
+ </div>
+</section>
+
+<section class="panel hidden" id="feePanel">
+ <div class="stephead"><span class="stepnum">STEP 3</span><h2>入場料はいくらですか？</h2></div>
+ <p class="section-label">当日券を含む最高料金を選択してください。</p>
+ <div class="grid" id="feeChoices"></div>
+</section>
+
+<section id="resultPanel" class="result hidden" aria-live="polite">
+ <div class="result-kicker">判定結果</div>
+ <h2 id="resultTitle"></h2>
+ <div id="resultDetail"></div>
+</section>
+
+<div class="actions">
+ <button class="btn secondary hidden" id="backBtn" onclick="goBack()">← 前の画面に戻る</button>
+ <button class="btn primary" onclick="resetAll()">最初からやり直す</button>
+</div>
+<div class="note"><b>ご注意</b><br>・入場料は当日券を含む最高料金で判定してください。<br>・スタジオ・リハーサル室（単独）は、2枚目の資料に記載された時間帯別料金を表示します。<br>・詳細な料金表やその他の利用条件については、施設の最新案内をご確認ください。</div>
+<footer>都城市中心市街地中核施設｜利用料金自動判定</footer>
+</div>
+<script>
+let selectedFacility="";
+let feeMode="";
+let historyStack=[];
+function show(id){document.getElementById(id).classList.remove("hidden");}
+function hide(id){document.getElementById(id).classList.add("hidden");}
+function scrollToId(id){document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start"});}
+function chooseFacility(name){
+ selectedFacility=name;
+ if(name==="セミナールーム"){
+   window.location.href="https://kotokotokotokoto0428-hub.github.io/new_dantai/";
+   return;
+ }
+ hide("resultPanel"); hide("feePanel"); show("purposePanel");
+ historyStack=["facility"]; updateBack(); scrollToId("purposePanel");
+}
+function showFeePanel(mode){
+ feeMode=mode; hide("resultPanel"); show("feePanel");
+ const box=document.getElementById("feeChoices"); box.innerHTML="";
+ let options=[];
+ if(mode==="member"){
+  options=[["2,001円以上","営利料金","red"],["2,000円以下","中段料金","green"]];
+ }else{
+  options=[["2,001円以上","営利料金","red"],["501円～2,000円","中段料金","green"],["500円以下","通常料金","blue"]];
+ }
+ options.forEach(([label,result,color])=>{
+  const b=document.createElement("button"); b.className="choice";
+  b.innerHTML="<b>"+label+"</b>";
+  b.onclick=()=>showResult(result,"入場料："+label+"（"+(mode==="member"?"会員招待のみ":"文化利用・その他")+"）",color);
+  box.appendChild(b);
+ });
+ historyStack=["facility","purpose"]; updateBack(); scrollToId("feePanel");
+}
+function showResult(title,detail,color){
+ hide("purposePanel"); hide("feePanel"); show("resultPanel");
+ const panel=document.getElementById("resultPanel");
+ panel.style.borderColor=color==="red"?"#ed6a2e":color==="green"?"#45a72d":"#079bd0";
+ document.getElementById("resultTitle").textContent=selectedFacility+"をご利用の場合："+title+"です。";
+ document.getElementById("resultDetail").textContent=detail;
+ historyStack.push("result"); updateBack(); scrollToId("resultPanel");
+}
+function showStudioResult(){
+ selectedFacility="スタジオ・リハーサル室（単独）";
+ hide("purposePanel");hide("feePanel");show("resultPanel");
+ const panel=document.getElementById("resultPanel");panel.style.borderColor="#ed7738";
+ document.getElementById("resultTitle").textContent="スタジオ・リハーサル室（単独）をご利用のお客様は、単一料金です。";
+ document.getElementById("resultDetail").innerHTML=
+ '<div class="rategrid">'+
+ '<div class="ratecard"><h3>○ スタジオ</h3><div class="rate"><span>9:00～17:00</span><strong>550円/時間</strong></div><div class="rate"><span>17:00～22:00</span><strong>660円/時間</strong></div></div>'+
+ '<div class="ratecard"><h3>○ リハーサル室（単独）</h3><div class="rate"><span>9:00～17:00</span><strong>420円/時間</strong></div><div class="rate"><span>17:00～22:00</span><strong>530円/時間</strong></div></div></div>';
+ historyStack=["facility","result"];updateBack();scrollToId("resultPanel");
+}
+function updateBack(){document.getElementById("backBtn").classList.toggle("hidden",historyStack.length<2);}
+function goBack(){
+ if(historyStack.length<2)return;
+ historyStack.pop();const prev=historyStack[historyStack.length-1];
+ hide("resultPanel");hide("feePanel");hide("purposePanel");
+ if(prev==="purpose")show("purposePanel");
+ if(prev==="fee")show("feePanel");
+ if(prev==="facility")show("facilityPanel");
+ updateBack();scrollToId(prev==="facility"?"facilityPanel":prev==="purpose"?"purposePanel":"feePanel");
+}
+function resetAll(){
+ selectedFacility="";feeMode="";historyStack=[];
+ hide("purposePanel");hide("feePanel");hide("resultPanel");show("facilityPanel");
+ updateBack();scrollToId("facilityPanel");
+}
+</script>
+</body>
+</html>
+
